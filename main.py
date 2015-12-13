@@ -64,6 +64,7 @@ cv2.setMouseCallback('image', on_mouse, 0)
 
 cap = cv2.VideoCapture(1)
 
+start= False
 
 while(True):
 
@@ -79,6 +80,22 @@ while(True):
     except cv2.error:
             pass
 
+    if start==True:
+        roi=cv2.imread("Crop.jpg")
+        roi = cv2.GaussianBlur(roi,(5,5),10)
+        hsv_roi = cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
+        roi_v,roi_s,roi_h = cv2.split(hsv_roi)
+
+
+        img = cv2.GaussianBlur(img,(5,5),10)
+        hsv_img=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+        img_v,img_s,img_h = cv2.split(hsv_roi)
+
+
+        son = np.hstack((roi_v,roi_s,roi_h))
+        cv2.imshow("progress",son)
+    else:
+        cv2.destroyWindow("progress")
 
     k = cv2.waitKey(33)
     if k==1048689:    # 'q' tusu cikmak icin
@@ -88,3 +105,7 @@ while(True):
     elif k==1048691:  # 's' tusu kaydediyor
         cv2.imwrite('Crop.jpg',crop)
         print 'goruntu kaydedildi'
+    elif k==1048692:
+        print("T tusuna basildi")
+        start=not(start)
+        print(start)
