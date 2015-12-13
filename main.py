@@ -1,4 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import division
+PKG = 'py3dx'
+import roslib
+
+roslib.load_manifest(PKG)
+
+from core_class import *
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
@@ -66,9 +74,16 @@ cap = cv2.VideoCapture(1)
 
 start= False
 mask=5
+
+rospy.init_node('move_test', anonymous=False)
+
+robot = Robot('r1')
+
+rate = rospy.Rate(10)
 while(True):
 
-
+    linear=0
+    angular=0
     # Capture frame-by-frame
     ret, frame = cap.read()
     # Our operations on the frame come here
@@ -88,9 +103,9 @@ while(True):
         roi_v,roi_s,roi_h = cv2.split(hsv_roi)
 
         #threshold degerleri ilki min ikincisi max
-        r_h_t=[roi_h.min(),roi_h.max()]
+        #r_h_t=[roi_h.min(),roi_h.max()]
         r_s_t=[roi_s.min(),roi_s.max()]
-        r_v_t=[roi_v.min(),roi_v.max()]
+        #r_v_t=[roi_v.min(),roi_v.max()]
 
 
         img = cv2.GaussianBlur(img,(mask,mask),10)
@@ -99,9 +114,9 @@ while(True):
         hsv_img=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
         img_v,img_s,img_h = cv2.split(hsv_img)
 
-        cv2.threshold(img_h,r_h_t[0],r_h_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_h)
+        #cv2.threshold(img_h,r_h_t[0],r_h_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_h)
         cv2.threshold(img_s,r_s_t[0],r_s_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_s)
-        cv2.threshold(img_v,r_v_t[0],r_v_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_v)
+        #cv2.threshold(img_v,r_v_t[0],r_v_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_v)
         #son = np.hstack((img_v,img_s,img_h))
 
         kontur=img_s.copy()
@@ -125,20 +140,28 @@ while(True):
 
         if angle<150 and angle>120:
             print ("Saga Don")
+            angular=0.3
 
         if angle<40 and angle>20:
             print ("Sola Don")
+            angular=-0.3
 
         if cy<120:
             print("ileri")
+            linear=0.3
 
         if cy>340:
-            print("geri")
+            print("DUR")
+            linear=0
 
+        robot.dif_drive(linear,angular)
+
+
+        rate.sleep()
 
         #print("Merkez Noktalari",cx,"  ",cy,"  Aci====> ",angle)
-        cv2.putText(bos,'ileri',(320,120), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
-        cv2.putText(bos,'geri',(320,340), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
+        cv2.putText(bos,'ILERI',(320,120), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
+        cv2.putText(bos,'Dur',(320,340), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
         cv2.circle(bos,(cx,cy), 20, (0,0,255), -1)
         cv2.imshow("Extracted Hand",bos)
     else:
