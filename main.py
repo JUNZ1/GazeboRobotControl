@@ -75,23 +75,31 @@ while(True):
     img = cv2.cvtColor(frame,0)
 
     cv2.imshow('image',img)
+    '''
     try:
         cv2.imshow('crop',crop)
     except cv2.error:
             pass
-
+    '''
     if start==True:
         roi=cv2.imread("Crop.jpg")
         roi = cv2.GaussianBlur(roi,(5,5),10)
         hsv_roi = cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
         roi_v,roi_s,roi_h = cv2.split(hsv_roi)
 
+        #threshold degerleri ilki min ikincisi max
+        r_h_t=[roi_h.min(),roi_h.max()]
+        r_s_t=[roi_s.min(),roi_s.max()]
+        r_v_t=[roi_v.min(),roi_v.max()]
+
 
         img = cv2.GaussianBlur(img,(5,5),10)
         hsv_img=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
         img_v,img_s,img_h = cv2.split(hsv_img)
 
-
+        cv2.threshold(img_h,r_h_t[1],r_h_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_h)
+        cv2.threshold(img_s,r_s_t[1],r_s_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_s)
+        cv2.threshold(img_v,r_v_t[1],r_v_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_v)
         son = np.hstack((img_v,img_s,img_h))
         cv2.imshow("progress",son)
     else:
