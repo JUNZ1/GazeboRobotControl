@@ -118,11 +118,29 @@ while(True):
         M = cv2.moments(cnt)
         cx = int(M['m10']/M['m00'])
         cy = int(M['m01']/M['m00'])
-        print(cx,"  ",cy)
 
+        (x,y),(MA,ma),angle = cv2.fitEllipse(cnt)
+
+        #cv2.imshow("progress",img_s)
+
+        if angle<150 and angle>120:
+            print ("Saga Don")
+
+        if angle<40 and angle>20:
+            print ("Sola Don")
+
+        if cy<120:
+            print("ileri")
+
+        if cy>340:
+            print("geri")
+
+
+        print("Merkez Noktalari",cx,"  ",cy,"  Aci====> ",angle)
+        cv2.putText(bos,'ileri',(320,120), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
+        cv2.putText(bos,'geri',(320,340), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
         cv2.circle(bos,(cx,cy), 20, (0,0,255), -1)
         cv2.imshow("Extracted Hand",bos)
-        #cv2.imshow("progress",img_s)
     else:
         cv2.destroyWindow("progress")
         cv2.destroyWindow("Extracted Hand")
