@@ -65,7 +65,7 @@ cv2.setMouseCallback('image', on_mouse, 0)
 cap = cv2.VideoCapture(1)
 
 start= False
-
+mask=5
 while(True):
 
 
@@ -83,7 +83,7 @@ while(True):
     '''
     if start==True:
         roi=cv2.imread("Crop.jpg")
-        roi = cv2.GaussianBlur(roi,(5,5),10)
+        roi = cv2.GaussianBlur(roi,(mask,mask),10)
         hsv_roi = cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
         roi_v,roi_s,roi_h = cv2.split(hsv_roi)
 
@@ -93,13 +93,13 @@ while(True):
         r_v_t=[roi_v.min(),roi_v.max()]
 
 
-        img = cv2.GaussianBlur(img,(5,5),10)
+        img = cv2.GaussianBlur(img,(mask,mask),10)
         hsv_img=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
         img_v,img_s,img_h = cv2.split(hsv_img)
 
-        cv2.threshold(img_h,r_h_t[1],r_h_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_h)
-        cv2.threshold(img_s,r_s_t[1],r_s_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_s)
-        cv2.threshold(img_v,r_v_t[1],r_v_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_v)
+        cv2.threshold(img_h,r_h_t[0],r_h_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_h)
+        cv2.threshold(img_s,r_s_t[0],r_s_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_s)
+        cv2.threshold(img_v,r_v_t[0],r_v_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_v)
         son = np.hstack((img_v,img_s,img_h))
         cv2.imshow("progress",son)
     else:
