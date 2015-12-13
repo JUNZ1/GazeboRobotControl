@@ -89,10 +89,10 @@ while(True):
 
         img = cv2.GaussianBlur(img,(5,5),10)
         hsv_img=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-        img_v,img_s,img_h = cv2.split(hsv_roi)
+        img_v,img_s,img_h = cv2.split(hsv_img)
 
 
-        son = np.hstack((roi_v,roi_s,roi_h))
+        son = np.hstack((img_v,img_s,img_h))
         cv2.imshow("progress",son)
     else:
         cv2.destroyWindow("progress")
