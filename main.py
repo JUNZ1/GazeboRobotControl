@@ -94,16 +94,38 @@ while(True):
 
 
         img = cv2.GaussianBlur(img,(mask,mask),10)
+        bos=img.copy()
+        bos[:,:,:]=0
         hsv_img=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
         img_v,img_s,img_h = cv2.split(hsv_img)
 
         cv2.threshold(img_h,r_h_t[0],r_h_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_h)
         cv2.threshold(img_s,r_s_t[0],r_s_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_s)
         cv2.threshold(img_v,r_v_t[0],r_v_t[1],cv2.THRESH_BINARY+cv2.THRESH_OTSU,img_v)
-        son = np.hstack((img_v,img_s,img_h))
-        cv2.imshow("progress",son)
+        #son = np.hstack((img_v,img_s,img_h))
+
+        kontur=img_s.copy()
+        contours, hierarchy = cv2.findContours(kontur,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+        index=np.zeros(len(contours),int)
+
+        for a in range(0,len(contours)):
+            index[a]=len(contours[a])
+
+        cnt = contours[index.argmax()]
+
+        cv2.drawContours(bos, [cnt], 0, (0,255,0), 3)
+
+        M = cv2.moments(cnt)
+        cx = int(M['m10']/M['m00'])
+        cy = int(M['m01']/M['m00'])
+        print(cx,"  ",cy)
+
+        cv2.circle(bos,(cx,cy), 20, (0,0,255), -1)
+        cv2.imshow("Extracted Hand",bos)
+        #cv2.imshow("progress",img_s)
     else:
         cv2.destroyWindow("progress")
+        cv2.destroyWindow("Extracted Hand")
 
     k = cv2.waitKey(33)
     if k==1048689:    # 'q' tusu cikmak icin
