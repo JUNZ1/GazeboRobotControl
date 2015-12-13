@@ -136,7 +136,7 @@ while(True):
             print("geri")
 
 
-        print("Merkez Noktalari",cx,"  ",cy,"  Aci====> ",angle)
+        #print("Merkez Noktalari",cx,"  ",cy,"  Aci====> ",angle)
         cv2.putText(bos,'ileri',(320,120), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
         cv2.putText(bos,'geri',(320,340), cv2.FONT_HERSHEY_SIMPLEX, 2,(255,0,0),1)
         cv2.circle(bos,(cx,cy), 20, (0,0,255), -1)
